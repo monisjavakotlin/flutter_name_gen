@@ -60,14 +60,23 @@ class _RandomWordsState extends State<RandomWords> {
     final bool alreadySaves = _save.contains(pair);
 
     return ListTile(
-      trailing: Icon(
-        alreadySaves ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaves ? Colors.red : Colors.blueGrey,
-      ),
       title: Text(
         pair.asPascalCase,
         style: _textFont,
       ),
+      trailing: Icon(
+        alreadySaves ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaves ? Colors.red : Colors.blueGrey,
+      ),
+      onTap: () {
+        setState(() {
+          if (alreadySaves) {
+            _save.remove(pair);
+          } else {
+            _save.add(pair);
+          }
+        });
+      },
     );
   }
 }
