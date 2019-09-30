@@ -7,7 +7,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Startup Name Generator',
+      title: 'Name Auto Generator',
       home: RandomWords(),
     );
   }
@@ -19,8 +19,9 @@ class RandomWords extends StatefulWidget {
 }
 
 class _RandomWordsState extends State<RandomWords> {
-  final List<WordPair> _suggestions = [];
-  final TextStyle _biggerFont = TextStyle(
+  final List<WordPair> _wordListView = [];
+  final Set<WordPair> _save = Set();
+  final TextStyle _textFont = TextStyle(
     fontSize: 18.0,
     fontWeight: FontWeight.bold,
     color: Colors.blueGrey,
@@ -31,34 +32,41 @@ class _RandomWordsState extends State<RandomWords> {
     return Scaffold(
       // Add from here...
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
+        title: Center(child: Text('Name Auto Generator')),
       ),
-      body: _buildSuggestions(),
+      body: _buildListView(),
     );
   }
 
-  Widget _buildSuggestions() {
+  Widget _buildListView() {
     return ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         itemBuilder: (BuildContext _context, int i) {
           if (i.isOdd) {
-            return Divider();
+            return Divider(
+              color: Colors.black,
+            );
           }
 
           final int index = i ~/ 2;
-
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
+          if (index >= _wordListView.length) {
+            _wordListView.addAll(generateWordPairs().take(10));
           }
-          return _buildRow(_suggestions[index]);
+          return _buildRow(_wordListView[index]);
         });
   }
 
   Widget _buildRow(WordPair pair) {
+    final bool alreadySaves = _save.contains(pair);
+
     return ListTile(
+      trailing: Icon(
+        alreadySaves ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaves ? Colors.red : Colors.blueGrey,
+      ),
       title: Text(
         pair.asPascalCase,
-        style: _biggerFont,
+        style: _textFont,
       ),
     );
   }
