@@ -6,21 +6,9 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-//    final wordPair = WordPair.random();
-
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Welcome to Flutter'),
-        ),
-        body: Center(
-//          child: const Text('Hello World'),
-          child: Center(
-            child: RandomWords(),
-          ),
-        ),
-      ),
+      title: 'Startup Name Generator',
+      home: RandomWords(),
     );
   }
 }
@@ -31,16 +19,46 @@ class RandomWords extends StatefulWidget {
 }
 
 class _RandomWordsState extends State<RandomWords> {
+  final List<WordPair> _suggestions = [];
+  final TextStyle _biggerFont = TextStyle(
+    fontSize: 18.0,
+    fontWeight: FontWeight.bold,
+    color: Colors.blueGrey,
+  );
+
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
+    return Scaffold(
+      // Add from here...
+      appBar: AppBar(
+        title: Text('Startup Name Generator'),
+      ),
+      body: _buildSuggestions(),
+    );
+  }
 
-    return Text(
-      wordPair.asPascalCase,
-      style: TextStyle(
-        fontSize: 40.0,
-        fontWeight: FontWeight.bold,
-        color: Colors.purpleAccent,
+  Widget _buildSuggestions() {
+    return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemBuilder: (BuildContext _context, int i) {
+          if (i.isOdd) {
+            return Divider();
+          }
+
+          final int index = i ~/ 2;
+
+          if (index >= _suggestions.length) {
+            _suggestions.addAll(generateWordPairs().take(10));
+          }
+          return _buildRow(_suggestions[index]);
+        });
+  }
+
+  Widget _buildRow(WordPair pair) {
+    return ListTile(
+      title: Text(
+        pair.asPascalCase,
+        style: _biggerFont,
       ),
     );
   }
