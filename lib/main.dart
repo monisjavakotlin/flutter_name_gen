@@ -20,7 +20,7 @@ class RandomWords extends StatefulWidget {
 
 class _RandomWordsState extends State<RandomWords> {
   final List<WordPair> _wordListView = [];
-  final Set<WordPair> _save = Set();
+  final Set<WordPair> _saved = Set();
   final TextStyle _textFont = TextStyle(
     fontSize: 18.0,
     fontWeight: FontWeight.bold,
@@ -33,8 +33,44 @@ class _RandomWordsState extends State<RandomWords> {
       // Add from here...
       appBar: AppBar(
         title: Center(child: Text('Name Auto Generator')),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: _pushSaved,
+          ),
+        ],
       ),
       body: _buildListView(),
+    );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          final Iterable<ListTile> tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _textFont,
+                ),
+              );
+            },
+          );
+          final List<Widget> divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved wordListView'),
+            ),
+            body: ListView(children: divided),
+          );
+        },
+      ),
     );
   }
 
@@ -57,7 +93,7 @@ class _RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
-    final bool alreadySaves = _save.contains(pair);
+    final bool alreadySaves = _saved.contains(pair);
 
     return ListTile(
       title: Text(
@@ -71,9 +107,9 @@ class _RandomWordsState extends State<RandomWords> {
       onTap: () {
         setState(() {
           if (alreadySaves) {
-            _save.remove(pair);
+            _saved.remove(pair);
           } else {
-            _save.add(pair);
+            _saved.add(pair);
           }
         });
       },
